@@ -49,7 +49,9 @@ class Game extends React.Component {
     this.state = {
       history: [
         {
-          squares: Array(9).fill(null)
+          squares: Array(9).fill(null),
+          col: null,
+          row: null
         }
       ],
       stepNumber: 0,
@@ -61,6 +63,10 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+    
+    const col = (i % 3) + 1;
+    const row = Math.floor((i / 3)) + 1; 
+
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
@@ -68,7 +74,9 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([
         {
-          squares: squares
+          squares: squares,
+          col: col,
+          row: row
         }
       ]),
       stepNumber: history.length,
@@ -92,10 +100,16 @@ class Game extends React.Component {
       const desc = move ?
         'Go to move #' + move :
         'Go to game start';
+      const col = move ? ' col: ' + history[move].col : '';
+      const row = move ? ' row: ' + history[move].row : '';
       return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
+        <>
+          <li key={move}>
+            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+            {col}
+            {row}
+          </li>
+        </>
       );
     });
 
@@ -122,8 +136,6 @@ class Game extends React.Component {
     );
   }
 }
-
-// ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<Game />);
